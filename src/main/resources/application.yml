@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: orders-management
+  datasource:
+    url: jdbc:postgresql://localhost:5432/orders
+    username: orders
+    password: orders
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  main:
+      allow-bean-definition-overriding: true
+  rabbitmq:
+    host: ${MFRG_RABBITMQ_HOST:localhost}
+    port: ${MFRG_RABBITMQ_PORT:5672}
+    username: ${MFRG_RABBITMQ_USERNAME:guest}
+    password: ${MFRG_RABBITMQ_PASSWORD:guest}
+    listener:
+      simple:
+        default-requeue-rejected: false
+        retry:
+          enabled: true
+          initial-interval: 3s
+          max-attempts: 3
+          max-interval: 30s
+springdoc:
+  swagger-ui:
+    display-request-duration: true
+    groups-order: DESC
+    operationsSorter: method
+    disable-swagger-default-url: true
+    use-root-path: true
+    path: /docs
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+
+rabbitmq:
+  queue:
+    orders:
+      return:
+        concurrency: 1
