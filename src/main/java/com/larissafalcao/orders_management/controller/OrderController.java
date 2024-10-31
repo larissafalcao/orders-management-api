@@ -37,6 +37,9 @@ public class OrderController implements OrderOpenApi {
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderResponse> getOrder(@PathVariable Long orderId) {
         OrderResponse order = orderService.getOrder(orderId);
+        if(order == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(order);
     }
 }

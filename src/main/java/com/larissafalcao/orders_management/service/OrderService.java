@@ -2,6 +2,7 @@ package com.larissafalcao.orders_management.service;
 
 import com.larissafalcao.orders_management.controller.dto.request.OrderRequest;
 import com.larissafalcao.orders_management.controller.dto.response.OrderResponse;
+import com.larissafalcao.orders_management.exception.EntityNotFoundException;
 import com.larissafalcao.orders_management.persistence.domain.OrderEntity;
 import com.larissafalcao.orders_management.persistence.domain.OrderProductEntity;
 import com.larissafalcao.orders_management.persistence.repository.OrderProductRepository;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static com.larissafalcao.orders_management.OrderStatusEnum.CALCULATED;
 
@@ -38,12 +40,17 @@ public class OrderService {
     }
 
     public OrderResponse getOrder(Long orderId) {
-        OrderEntity order = orderRepository.findById(orderId).orElseThrow();
+        OrderEntity order = orderRepository.findById(orderId).orElseThrow(() -> new EntityNotFoundException("Order not found"));
         return modelMapper.map(order, OrderResponse.class);
     }
 
     @Transactional
     public void calculateTotalOrder(OrderRequest orderRequest) {
+        Optional<OrderEntity> orderExistent = orderRepository.findById(orderRequest.getOrderId());
+        if(orderExistent.isPresent()) {
+            return;
+        }
+
         BigDecimal totalValue = orderRequest.getItems().stream()
                 .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
