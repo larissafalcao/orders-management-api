@@ -2,7 +2,7 @@
 This project is an API to do orders management.
 
 ### Requires ###
-* Java 32
+* Java 21
 * Docker - https://docs.docker.com/install/
 * Docker compose - https://docs.docker.com/compose/install/
 * Maven - https://maven.apache.org/download.cgi
